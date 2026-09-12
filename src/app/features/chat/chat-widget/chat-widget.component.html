@@ -1,0 +1,32 @@
+@if (open()) {
+  <div class="chat-panel">
+    <div class="chat-header">
+      <span>Asistente SmartShop</span>
+    </div>
+
+    <div class="chat-messages">
+      @for (message of messages(); track $index) {
+        <div class="message" [class.user]="message.role === 'user'" [innerHTML]="renderMessage(message.text)"></div>
+      }
+
+      @if (sending()) {
+        <div class="message assistant typing">
+          <mat-spinner diameter="16"></mat-spinner>
+        </div>
+      }
+    </div>
+
+    <form class="chat-input" (ngSubmit)="send()">
+      <mat-form-field appearance="outline" class="full-width">
+        <input matInput [(ngModel)]="draft" name="draft" placeholder="Escribe tu mensaje..." />
+      </mat-form-field>
+      <button mat-icon-button color="primary" type="submit" [disabled]="!draft.trim() || sending()">
+        <mat-icon>send</mat-icon>
+      </button>
+    </form>
+  </div>
+}
+
+<button class="chat-fab" mat-fab color="accent" (click)="toggle()">
+  <mat-icon>{{ open() ? 'close' : 'chat' }}</mat-icon>
+</button>

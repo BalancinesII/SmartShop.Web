@@ -1,0 +1,69 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Catálogo</h1>
+
+    @if (authService.isAdmin()) {
+      <button mat-raised-button color="primary" (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon>
+        Nuevo producto
+      </button>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="loading">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else if (products().length === 0) {
+    <p class="empty">Todavía no hay productos en el catálogo.</p>
+  } @else {
+    <div class="grid">
+      @for (product of products(); track product.id) {
+        <mat-card class="product-card">
+          <mat-card-header>
+            <mat-card-title>{{ product.name }}</mat-card-title>
+            <mat-card-subtitle>{{ product.category }}</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <p class="price">{{ product.price | number: '1.2-2' }} €</p>
+            <p class="stock">Stock: {{ product.stock }}</p>
+
+            @if (product.description) {
+              <p class="description">{{ product.description }}</p>
+            } @else if (authService.isAdmin()) {
+              <p class="description muted">Sin descripción generada todavía.</p>
+            }
+          </mat-card-content>
+
+          @if (authService.isAdmin()) {
+            <mat-card-actions align="end">
+              <button
+                mat-icon-button
+                matTooltip="Generar descripción con IA"
+                [disabled]="generatingId() === product.id"
+                (click)="generateDescription(product)"
+              >
+                <mat-icon>auto_awesome</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Editar" (click)="openEditDialog(product)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Eliminar" (click)="deleteProduct(product)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-card-actions>
+          }
+        </mat-card>
+      }
+    </div>
+
+    <mat-paginator
+      [length]="totalCount()"
+      [pageSize]="pageSize()"
+      [pageIndex]="pageIndex()"
+      [pageSizeOptions]="[6, 9, 18]"
+      (page)="onPageChange($event)"
+    ></mat-paginator>
+  }
+</div>
