@@ -1,25 +1,25 @@
-<mat-toolbar color="primary" class="navbar">
-  <span class="brand" routerLink="/products">
-    <mat-icon>shopping_bag</mat-icon>
-    SmartShop
-  </span>
+<header class="navbar">
+  <a class="brand" routerLink="/products">
+    <span class="brand-mark">◆</span>
+    <span class="brand-name">SmartShop</span>
+    <span class="brand-tag mono">/ai</span>
+  </a>
 
-  <span class="spacer"></span>
-
-  @if (authService.isLoggedIn()) {
-    <span class="user-email">
-      {{ authService.userEmail() }}
-      @if (authService.isAdmin()) {
-        <span class="role-badge">Admin</span>
-      }
-    </span>
-
-    <button mat-button (click)="logout()">
-      <mat-icon>logout</mat-icon>
-      Salir
-    </button>
-  } @else {
-    <button mat-button routerLink="/login">Entrar</button>
-    <button mat-raised-button color="accent" routerLink="/register">Registrarse</button>
-  }
-</mat-toolbar>
+  <nav class="nav-actions">
+    @if (authService.isLoggedIn()) {
+      <span class="user">
+        {{ authService.userEmail() }}
+        @if (authService.isAdmin()) {
+          <span class="role mono">admin</span>
+        }
+      </span>
+      <button mat-button (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Sign out
+      </button>
+    } @else {
+      <button mat-button routerLink="/login">Sign in</button>
+      <button mat-raised-button color="primary" routerLink="/register">Get started</button>
+    }
+  </nav>
+</header>

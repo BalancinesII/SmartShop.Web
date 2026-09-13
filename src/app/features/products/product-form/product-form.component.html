@@ -1,19 +1,19 @@
-<h2 mat-dialog-title>{{ isEdit() ? 'Editar producto' : 'Nuevo producto' }}</h2>
+<h2 mat-dialog-title>{{ isEdit() ? 'Edit product' : 'New product' }}</h2>
 
 <form [formGroup]="form" (ngSubmit)="submit()">
   <mat-dialog-content class="form-content">
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Nombre</mat-label>
+      <mat-label>Name</mat-label>
       <input matInput formControlName="name" />
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Categoría</mat-label>
+      <mat-label>Category</mat-label>
       <input matInput formControlName="category" />
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Precio (€)</mat-label>
+      <mat-label>Price (€)</mat-label>
       <input matInput type="number" step="0.01" formControlName="price" />
     </mat-form-field>
 
@@ -21,12 +21,18 @@
       <mat-label>Stock</mat-label>
       <input matInput type="number" formControlName="stock" />
     </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Image URL</mat-label>
+      <input matInput formControlName="imageUrl" placeholder="https://…" />
+      <mat-hint>Optional — paste a link to a product image</mat-hint>
+    </mat-form-field>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()">Cancelar</button>
+    <button mat-button type="button" (click)="cancel()">Cancel</button>
     <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
-      Guardar
+      Save
     </button>
   </mat-dialog-actions>
 </form>

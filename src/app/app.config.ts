@@ -6,7 +6,7 @@ import { MatPaginatorIntl } from '@angular/material/paginator';
 
 import { routes } from './app.routes';
 import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
-import { SpanishPaginatorIntl } from './core/i18n/spanish-paginator-intl';
+import { EnglishPaginatorIntl } from './core/i18n/english-paginator-intl';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,6 +14,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withInterceptors([jwtInterceptor])),
     provideAnimationsAsync(),
-    { provide: MatPaginatorIntl, useClass: SpanishPaginatorIntl }
+    { provide: MatPaginatorIntl, useClass: EnglishPaginatorIntl }
   ]
 };

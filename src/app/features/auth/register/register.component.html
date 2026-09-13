@@ -1,54 +1,53 @@
-<div class="auth-page">
-  <mat-card class="auth-card">
-    <mat-card-header>
-      <mat-card-title>Crear cuenta</mat-card-title>
-    </mat-card-header>
+<div class="auth-layout">
+  <aside class="brand-panel">
+    <div class="brand-panel-inner">
+      <span class="brand-logo">◆ SmartShop <span class="mono brand-logo-tag">/ai</span></span>
+      <h2 class="brand-headline">Ship your store in an afternoon.</h2>
+      <p class="brand-copy">
+        Skip the boilerplate. Auth, roles, payments and an AI assistant — already wired up.
+      </p>
+    </div>
+  </aside>
 
-    <mat-card-content>
+  <main class="form-panel">
+    <div class="form-inner">
+      <h1 class="form-title">Create account</h1>
+      <p class="form-sub">Join in a few seconds. No credit card required.</p>
+
       <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
-        <mat-form-field appearance="outline">
-          <mat-label>Nombre</mat-label>
-          <input matInput formControlName="firstName" autocomplete="given-name" />
-        </mat-form-field>
+        <div class="field-row">
+          <label class="field">
+            <span class="field-label">First name</span>
+            <input formControlName="firstName" autocomplete="given-name" placeholder="Jane" />
+          </label>
+          <label class="field">
+            <span class="field-label">Last name</span>
+            <input formControlName="lastName" autocomplete="family-name" placeholder="Doe" />
+          </label>
+        </div>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Apellidos</mat-label>
-          <input matInput formControlName="lastName" autocomplete="family-name" />
-        </mat-form-field>
+        <label class="field">
+          <span class="field-label">Email</span>
+          <input type="email" formControlName="email" autocomplete="email" placeholder="you@example.com" />
+        </label>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Email</mat-label>
-          <input matInput type="email" formControlName="email" autocomplete="email" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Contraseña</mat-label>
-          <input matInput type="password" formControlName="password" autocomplete="new-password" />
-          <mat-hint>Mínimo 6 caracteres</mat-hint>
-        </mat-form-field>
+        <label class="field">
+          <span class="field-label">Password</span>
+          <input type="password" formControlName="password" autocomplete="new-password" placeholder="At least 6 characters" />
+        </label>
 
         @if (errorMessage()) {
           <p class="error">{{ errorMessage() }}</p>
         }
 
-        <button
-          mat-raised-button
-          color="primary"
-          type="submit"
-          [disabled]="form.invalid || loading()"
-          class="submit-btn"
-        >
-          @if (loading()) {
-            <mat-spinner diameter="20"></mat-spinner>
-          } @else {
-            Crear cuenta
-          }
+        <button type="submit" class="submit-btn" [disabled]="form.invalid || loading()">
+          @if (loading()) { <span class="btn-spinner"></span> } @else { Create account }
         </button>
       </form>
-    </mat-card-content>
 
-    <mat-card-footer class="footer-link">
-      ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
-    </mat-card-footer>
-  </mat-card>
+      <p class="footer-link">
+        Already have an account? <a routerLink="/login">Sign in</a>
+      </p>
+    </div>
+  </main>
 </div>

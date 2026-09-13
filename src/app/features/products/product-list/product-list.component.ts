@@ -1,9 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -19,10 +17,8 @@ import { ProductFormComponent, ProductFormResult } from '../product-form/product
   standalone: true,
   imports: [
     DecimalPipe,
-    MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatChipsModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatDialogModule,
@@ -60,9 +56,27 @@ export class ProductListComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.snackBar.open('No se pudieron cargar los productos.', 'Cerrar', { duration: 4000 });
+        this.snackBar.open('Could not load products.', 'Dismiss', { duration: 4000 });
       }
     });
+  }
+
+  // Derive a stable hue from the product name so the placeholder colour is
+  // consistent per product but varied across the catalog.
+  colorFor(name: string): string {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const hue = Math.abs(hash) % 360;
+    return `${hue}`;
+  }
+
+  // If an image URL is broken, hide the <img> so the layout doesn't show a
+  // broken-image icon. The placeholder isn't re-shown (URL was provided), but
+  // the card stays clean.
+  onImageError(event: Event): void {
+    (event.target as HTMLImageElement).style.display = 'none';
   }
 
   onPageChange(event: PageEvent): void {
@@ -79,10 +93,10 @@ export class ProductListComponent implements OnInit {
 
       this.productService.create(result).subscribe({
         next: () => {
-          this.snackBar.open('Producto creado.', 'Cerrar', { duration: 3000 });
+          this.snackBar.open('Product created.', 'Dismiss', { duration: 3000 });
           this.load();
         },
-        error: () => this.snackBar.open('No se pudo crear el producto.', 'Cerrar', { duration: 4000 })
+        error: () => this.snackBar.open('Could not create the product.', 'Dismiss', { duration: 4000 })
       });
     });
   }
@@ -95,23 +109,23 @@ export class ProductListComponent implements OnInit {
 
       this.productService.update({ id: product.id, ...result }).subscribe({
         next: () => {
-          this.snackBar.open('Producto actualizado.', 'Cerrar', { duration: 3000 });
+          this.snackBar.open('Product updated.', 'Dismiss', { duration: 3000 });
           this.load();
         },
-        error: () => this.snackBar.open('No se pudo actualizar el producto.', 'Cerrar', { duration: 4000 })
+        error: () => this.snackBar.open('Could not update the product.', 'Dismiss', { duration: 4000 })
       });
     });
   }
 
   deleteProduct(product: Product): void {
-    if (!confirm(`¿Eliminar "${product.name}"?`)) return;
+    if (!confirm(`Delete "${product.name}"?`)) return;
 
     this.productService.delete(product.id).subscribe({
       next: () => {
-        this.snackBar.open('Producto eliminado.', 'Cerrar', { duration: 3000 });
+        this.snackBar.open('Product deleted.', 'Dismiss', { duration: 3000 });
         this.load();
       },
-      error: () => this.snackBar.open('No se pudo eliminar el producto.', 'Cerrar', { duration: 4000 })
+      error: () => this.snackBar.open('Could not delete the product.', 'Dismiss', { duration: 4000 })
     });
   }
 
@@ -127,7 +141,7 @@ export class ProductListComponent implements OnInit {
       },
       error: () => {
         this.generatingId.set(null);
-        this.snackBar.open('No se pudo generar la descripción.', 'Cerrar', { duration: 4000 });
+        this.snackBar.open('Could not generate the description.', 'Dismiss', { duration: 4000 });
       }
     });
   }

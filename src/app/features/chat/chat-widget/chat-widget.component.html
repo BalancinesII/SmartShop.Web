@@ -1,7 +1,11 @@
 @if (open()) {
   <div class="chat-panel">
     <div class="chat-header">
-      <span>Asistente SmartShop</span>
+      <span class="chat-title">
+        <span class="dot"></span>
+        SmartShop Assistant
+      </span>
+      <span class="chat-tag mono">AI</span>
     </div>
 
     <div class="chat-messages">
@@ -17,16 +21,25 @@
     </div>
 
     <form class="chat-input" (ngSubmit)="send()">
-      <mat-form-field appearance="outline" class="full-width">
-        <input matInput [(ngModel)]="draft" name="draft" placeholder="Escribe tu mensaje..." />
-      </mat-form-field>
-      <button mat-icon-button color="primary" type="submit" [disabled]="!draft.trim() || sending()">
-        <mat-icon>send</mat-icon>
+      <input
+        class="chat-field"
+        [(ngModel)]="draft"
+        name="draft"
+        placeholder="Type your message…"
+        autocomplete="off"
+      />
+      <button
+        class="send-btn"
+        type="submit"
+        [disabled]="!draft.trim() || sending()"
+        aria-label="Send message"
+      >
+        <mat-icon>arrow_upward</mat-icon>
       </button>
     </form>
   </div>
 }
 
-<button class="chat-fab" mat-fab color="accent" (click)="toggle()">
-  <mat-icon>{{ open() ? 'close' : 'chat' }}</mat-icon>
+<button class="chat-fab" (click)="toggle()" [attr.aria-label]="open() ? 'Close chat' : 'Open chat'">
+  <mat-icon>{{ open() ? 'close' : 'chat_bubble' }}</mat-icon>
 </button>

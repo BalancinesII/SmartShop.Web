@@ -5,6 +5,7 @@ export interface Product {
   price: number;
   stock: number;
   category: string;
+  imageUrl?: string | null;
   isActive: boolean;
 }
 
@@ -13,6 +14,7 @@ export interface CreateProductRequest {
   price: number;
   stock: number;
   category: string;
+  imageUrl?: string | null;
 }
 
 export interface UpdateProductRequest extends CreateProductRequest {

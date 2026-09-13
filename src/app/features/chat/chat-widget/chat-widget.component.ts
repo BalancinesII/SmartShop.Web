@@ -2,9 +2,6 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ChatService } from '../../../core/services/chat.service';
 import { ChatDisplayMessage } from '../../../core/models/chat.model';
@@ -15,9 +12,6 @@ import { ChatDisplayMessage } from '../../../core/models/chat.model';
   imports: [
     FormsModule,
     MatIconModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
     MatProgressSpinnerModule
   ],
   templateUrl: './chat-widget.component.html',
@@ -30,18 +24,18 @@ export class ChatWidgetComponent {
   readonly open = signal(false);
   readonly sending = signal(false);
   readonly messages = signal<ChatDisplayMessage[]>([
-    { role: 'assistant', text: '¡Hola! ¿En qué puedo ayudarte con nuestro catálogo?' }
+    { role: 'assistant', text: 'Hi! How can I help you with our catalog?' }
   ]);
   draft = '';
 
-  // Un GUID por sesión de navegador para que el backend mantenga el historial.
+  // A GUID per browser session so the backend keeps the conversation history.
   private readonly sessionId = crypto.randomUUID();
 
   toggle(): void {
     this.open.update((value) => !value);
   }
 
-  // Convierte el markdown básico que devuelve la IA (negritas, saltos de línea)
+  // Converts the basic markdown the AI returns (bold, line breaks)
   // a HTML seguro. Escapamos primero cualquier etiqueta real para evitar XSS,
   // y solo entonces aplicamos el formato que nosotros mismos generamos.
   renderMessage(text: string): SafeHtml {
@@ -73,7 +67,7 @@ export class ChatWidgetComponent {
         this.sending.set(false);
         this.messages.update((list) => [
           ...list,
-          { role: 'assistant', text: 'Ha ocurrido un error. Inténtalo de nuevo en un momento.' }
+          { role: 'assistant', text: 'Something went wrong. Please try again in a moment.' }
         ]);
       }
     });

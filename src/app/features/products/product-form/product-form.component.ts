@@ -11,6 +11,7 @@ export interface ProductFormResult {
   price: number;
   stock: number;
   category: string;
+  imageUrl: string | null;
 }
 
 @Component({
@@ -37,7 +38,8 @@ export class ProductFormComponent {
     name: [this.data?.product?.name ?? '', [Validators.required, Validators.maxLength(200)]],
     price: [this.data?.product?.price ?? 0, [Validators.required, Validators.min(0.01)]],
     stock: [this.data?.product?.stock ?? 0, [Validators.required, Validators.min(0)]],
-    category: [this.data?.product?.category ?? '', [Validators.required, Validators.maxLength(100)]]
+    category: [this.data?.product?.category ?? '', [Validators.required, Validators.maxLength(100)]],
+    imageUrl: [this.data?.product?.imageUrl ?? '']
   });
 
   submit(): void {

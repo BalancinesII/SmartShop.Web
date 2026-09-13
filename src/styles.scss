@@ -1,4 +1,75 @@
-/* You can add global styles to this file, and also import other style files */
+/* ============================================================
+   SmartShop — global styles & design tokens
+   ============================================================ */
+
+:root {
+  /* Palette — warm off-white base, graphite ink, electric indigo accent */
+  --color-bg:        #FAFAF8;
+  --color-surface:   #FFFFFF;
+  --color-ink:       #16162A;
+  --color-ink-soft:  #55556B;
+  --color-line:      #E7E7E1;
+  --color-accent:    #4F46E5;
+  --color-accent-ink:#3730A3;
+  --color-success:   #0E9F6E;
+  --color-danger:    #E02424;
+
+  /* Type */
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body:    "Inter", system-ui, sans-serif;
+
+  /* Shape */
+  --radius:    14px;
+  --radius-sm: 10px;
+  --shadow:    0 1px 2px rgba(22,22,42,.04), 0 8px 24px rgba(22,22,42,.06);
+}
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, .display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+}
+
+/* A small monospace tech accent used sparingly (badges, code-y labels) */
+.mono {
+  font-family: "SFMono-Regular", "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+
+a { color: var(--color-accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Respect reduced motion globally */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Nudge Angular Material toward our accent instead of the default blue */
+.mat-mdc-raised-button.mat-primary,
+.mat-mdc-fab.mat-primary,
+.mat-mdc-mini-fab.mat-primary {
+  --mdc-filled-button-container-color: var(--color-accent);
+  --mdc-filled-button-label-text-color: #ffffff;
+  background-color: var(--color-accent) !important;
+  color: #ffffff !important;
+}
+
+.mat-mdc-raised-button.mat-primary .mat-icon,
+.mat-mdc-raised-button.mat-primary .mdc-button__label {
+  color: #ffffff !important;
+}
+
+.mat-mdc-button.mat-primary { --mdc-text-button-label-text-color: var(--color-accent); }
