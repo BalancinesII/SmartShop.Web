@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -27,13 +27,20 @@ import { ProductFormComponent, ProductFormResult } from '../product-form/product
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss'
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent implements OnInit, OnDestroy {
   readonly products = signal<Product[]>([]);
   readonly loading = signal(true);
   readonly totalCount = signal(0);
   readonly pageSize = signal(9);
   readonly pageIndex = signal(0);
   readonly generatingId = signal<string | null>(null);
+
+  // The demo API runs on free Azure tiers that sleep when idle, so the first
+  // request can take a while. After a few seconds we tell the visitor why,
+  // instead of leaving a spinner that looks broken.
+  readonly slowLoad = signal(false);
+  private slowLoadTimer?: ReturnType<typeof setTimeout>;
+  private static readonly SLOW_LOAD_MS = 3000;
 
   constructor(
     private productService: ProductService,
@@ -46,19 +53,40 @@ export class ProductListComponent implements OnInit {
     this.load();
   }
 
+  ngOnDestroy(): void {
+    this.clearSlowLoadTimer();
+  }
+
   load(): void {
     this.loading.set(true);
+    this.startSlowLoadTimer();
     this.productService.getAll(this.pageIndex() + 1, this.pageSize()).subscribe({
       next: (result) => {
         this.products.set(result.items);
         this.totalCount.set(result.totalCount);
-        this.loading.set(false);
+        this.finishLoading();
       },
       error: () => {
-        this.loading.set(false);
+        this.finishLoading();
         this.snackBar.open('Could not load products.', 'Dismiss', { duration: 4000 });
       }
     });
+  }
+
+  private finishLoading(): void {
+    this.loading.set(false);
+    this.clearSlowLoadTimer();
+  }
+
+  private startSlowLoadTimer(): void {
+    this.clearSlowLoadTimer();
+    this.slowLoadTimer = setTimeout(() => this.slowLoad.set(true), ProductListComponent.SLOW_LOAD_MS);
+  }
+
+  private clearSlowLoadTimer(): void {
+    clearTimeout(this.slowLoadTimer);
+    this.slowLoadTimer = undefined;
+    this.slowLoad.set(false);
   }
 
   // Derive a stable hue from the product name so the placeholder colour is

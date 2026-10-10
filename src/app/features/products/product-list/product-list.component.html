@@ -25,6 +25,12 @@
   @if (loading()) {
     <div class="loading">
       <mat-spinner diameter="40"></mat-spinner>
+      @if (slowLoad()) {
+        <p class="loading-hint" role="status">
+          Waking up the demo server — it runs on a free tier that sleeps when idle.
+          This first load can take up to a minute.
+        </p>
+      }
     </div>
   } @else if (products().length === 0) {
     <div class="empty">
