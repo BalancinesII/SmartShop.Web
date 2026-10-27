@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +14,7 @@ import { ProductFormComponent, ProductFormResult } from '../product-form/product
 
 @Component({
   selector: 'app-product-list',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     DecimalPipe,
     MatButtonModule,
