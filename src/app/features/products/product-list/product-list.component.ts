@@ -14,7 +14,6 @@ import { ProductFormComponent, ProductFormResult } from '../product-form/product
 
 @Component({
   selector: 'app-product-list',
-  standalone: true,
   imports: [
     DecimalPipe,
     MatButtonModule,

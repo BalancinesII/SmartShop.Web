@@ -6,7 +6,6 @@ import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-navbar',
-  standalone: true,
   imports: [RouterLink, MatButtonModule, MatIconModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'

@@ -16,7 +16,6 @@ export interface ProductFormResult {
 
 @Component({
   selector: 'app-product-form',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatDialogModule,

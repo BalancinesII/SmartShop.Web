@@ -8,7 +8,6 @@ import { ChatDisplayMessage } from '../../../core/models/chat.model';
 
 @Component({
   selector: 'app-chat-widget',
-  standalone: true,
   imports: [
     FormsModule,
     MatIconModule,

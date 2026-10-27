@@ -5,7 +5,6 @@ import { ChatWidgetComponent } from './features/chat/chat-widget/chat-widget.com
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [RouterOutlet, NavbarComponent, ChatWidgetComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
