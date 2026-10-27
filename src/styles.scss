@@ -73,3 +73,14 @@ a:hover { text-decoration: underline; }
 }
 
 .mat-mdc-button.mat-primary { --mat-button-text-label-text-color: var(--color-accent); }
+
+/* Since Material 19 the prebuilt theme sets its fonts to "Roboto" with no
+   fallback. Roboto isn't loaded, so restore the "Roboto, sans-serif" stack
+   that Material 18 used to keep the same look. */
+html {
+  @each $scale in display, headline, title, body, label {
+    @each $size in large, medium, small {
+      --mat-sys-#{$scale}-#{$size}-font: Roboto, sans-serif;
+    }
+  }
+}
