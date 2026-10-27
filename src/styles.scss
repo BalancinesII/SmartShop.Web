@@ -61,8 +61,8 @@ a:hover { text-decoration: underline; }
 .mat-mdc-raised-button.mat-primary,
 .mat-mdc-fab.mat-primary,
 .mat-mdc-mini-fab.mat-primary {
-  --mdc-filled-button-container-color: var(--color-accent);
-  --mdc-filled-button-label-text-color: #ffffff;
+  --mat-button-filled-container-color: var(--color-accent);
+  --mat-button-filled-label-text-color: #ffffff;
   background-color: var(--color-accent) !important;
   color: #ffffff !important;
 }
@@ -72,4 +72,4 @@ a:hover { text-decoration: underline; }
   color: #ffffff !important;
 }
 
-.mat-mdc-button.mat-primary { --mdc-text-button-label-text-color: var(--color-accent); }
+.mat-mdc-button.mat-primary { --mat-button-text-label-text-color: var(--color-accent); }
