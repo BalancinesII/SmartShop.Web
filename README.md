@@ -1,6 +1,6 @@
 # SmartshopWeb
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.21.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.21 and is now on Angular 22. It requires Node.js 22.22.3+ or 24.15+.
 
 ## Development server
 
@@ -16,7 +16,7 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 
 ## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Run `ng test` to execute the unit tests via [Vitest](https://vitest.dev) (jsdom, no browser needed). Use `npm run test:ci` for a single run, as in CI.
 
 ## Running end-to-end tests
 

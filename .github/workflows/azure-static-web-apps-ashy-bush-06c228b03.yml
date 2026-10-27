@@ -5,42 +5,68 @@ on:
     branches:
       - main
   pull_request:
-    types: [opened, synchronize, reopened, closed]
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
+  # Runs on every push to main and on every pull request to main.
+  # Unit tests run in Node with jsdom (Vitest), so no browser is needed.
+  test_and_build_job:
+    runs-on: ubuntu-latest
+    name: Test and Build Job
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test:ci
+
+      - name: Build (production)
+        run: npx ng build --configuration production
+
+      - name: Upload build output
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v7
+        with:
+          name: smartshop-web
+          path: dist/smartshop-web/browser
+          retention-days: 1
+
+  # Only deploys from pushes to main, and only after tests and build passed.
+  # Pull requests are tested but never deployed.
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    needs: test_and_build_job
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-      - uses: actions/checkout@v3
+      - name: Download build output
+        uses: actions/download-artifact@v8
         with:
-          submodules: true
-          lfs: false
+          name: smartshop-web
+          path: dist
+
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ASHY_BUSH_06C228B03 }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/" # App source code path
+          # The app is already built and tested by test_and_build_job, so Oryx is skipped and the
+          # exact tested output (including staticwebapp.config.json) is uploaded.
+          app_location: "dist" # Prebuilt app content
           api_location: "" # Api source code path - optional
-          output_location: "dist/smartshop-web/browser" # Built app content directory - optional
+          skip_app_build: true
           ###### End of Repository/Build Configurations ######
-
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-    steps:
-      - name: Close Pull Request
-        id: closepullrequest
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ASHY_BUSH_06C228B03 }}
-          action: "close"
