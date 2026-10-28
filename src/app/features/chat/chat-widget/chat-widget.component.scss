@@ -99,7 +99,24 @@
     border-bottom-right-radius: 4px;
   }
 
-  &.typing { display: flex; align-items: center; }
+  &.typing { display: flex; align-items: center; gap: 4px; padding: 0.75rem 0.8rem; }
+
+  &.error {
+    background: #FDECEC;
+    color: #9B1C1C;
+  }
+
+  // Blinking caret after the text while the reply is still arriving.
+  &.streaming::after {
+    content: '';
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    background: currentColor;
+    animation: caret-blink 1s steps(1) infinite;
+  }
 
   ::ng-deep strong { font-weight: 600; }
 }
@@ -144,4 +161,29 @@
   &:hover:not(:disabled) { background: var(--color-accent-ink); }
   &:disabled { background: #C7C7D1; cursor: default; }
   .mat-icon { color: #fff; font-size: 20px; width: 20px; height: 20px; }
+}
+
+.typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #9a9aab;
+  animation: typing-bounce 1.2s ease-in-out infinite;
+
+  &:nth-child(2) { animation-delay: 0.15s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+}
+
+@keyframes typing-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+@keyframes caret-blink {
+  50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typing-dot,
+  .message.streaming::after { animation: none; }
 }

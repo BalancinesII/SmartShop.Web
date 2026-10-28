@@ -1,8 +1,17 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  ElementRef,
+  afterRenderEffect,
+  inject,
+  signal,
+  viewChild
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ChatService } from '../../../core/services/chat.service';
 import { ChatDisplayMessage } from '../../../core/models/chat.model';
 
@@ -11,8 +20,7 @@ import { ChatDisplayMessage } from '../../../core/models/chat.model';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
-    MatIconModule,
-    MatProgressSpinnerModule
+    MatIconModule
   ],
   templateUrl: './chat-widget.component.html',
   styleUrl: './chat-widget.component.scss'
@@ -20,9 +28,14 @@ import { ChatDisplayMessage } from '../../../core/models/chat.model';
 export class ChatWidgetComponent {
   private sanitizer = inject(DomSanitizer);
   private chatService = inject(ChatService);
+  private destroyRef = inject(DestroyRef);
 
   readonly open = signal(false);
+  // True from sending the message until the stream finishes or fails.
   readonly sending = signal(false);
+  // True while the reply is arriving; before the first fragment the widget
+  // shows the "typing" bubble, afterwards a caret on the growing message.
+  readonly streaming = signal(false);
   readonly messages = signal<ChatDisplayMessage[]>([
     { role: 'assistant', text: 'Hi! How can I help you with our catalog?' }
   ]);
@@ -30,6 +43,18 @@ export class ChatWidgetComponent {
 
   // A GUID per browser session so the backend keeps the conversation history.
   private readonly sessionId = crypto.randomUUID();
+
+  private readonly messagesContainer = viewChild<ElementRef<HTMLElement>>('messagesContainer');
+
+  constructor() {
+    // Keep the latest text in view while the reply grows.
+    afterRenderEffect(() => {
+      this.messages();
+      this.sending();
+      const container = this.messagesContainer()?.nativeElement;
+      if (container) container.scrollTop = container.scrollHeight;
+    });
+  }
 
   toggle(): void {
     this.open.update((value) => !value);
@@ -58,18 +83,43 @@ export class ChatWidgetComponent {
     this.draft = '';
     this.sending.set(true);
 
-    this.chatService.sendMessage({ sessionId: this.sessionId, message: text }).subscribe({
-      next: (result) => {
-        this.sending.set(false);
-        this.messages.update((list) => [...list, { role: 'assistant', text: result.response }]);
-      },
-      error: () => {
-        this.sending.set(false);
-        this.messages.update((list) => [
-          ...list,
-          { role: 'assistant', text: 'Something went wrong. Please try again in a moment.' }
-        ]);
-      }
-    });
+    // Index the assistant reply will take once its first fragment arrives.
+    const replyIndex = this.messages().length;
+
+    this.chatService
+      .streamMessage({ sessionId: this.sessionId, message: text })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (fragment) => {
+          if (!this.streaming()) {
+            this.streaming.set(true);
+            this.messages.update((list) => [...list, { role: 'assistant', text: fragment }]);
+          } else {
+            this.messages.update((list) =>
+              list.map((message, index) =>
+                index === replyIndex ? { ...message, text: message.text + fragment } : message
+              )
+            );
+          }
+        },
+        complete: () => {
+          this.sending.set(false);
+          this.streaming.set(false);
+        },
+        error: () => {
+          this.sending.set(false);
+          this.streaming.set(false);
+          // A partial reply is dropped: the API only saves complete answers, so
+          // keeping it would show text the assistant will not remember.
+          this.messages.update((list) => [
+            ...list.slice(0, replyIndex),
+            { role: 'assistant', text: 'Something went wrong. Please try again in a moment.', error: true }
+          ]);
+        }
+      });
+  }
+
+  isStreamingMessage(index: number): boolean {
+    return this.streaming() && index === this.messages().length - 1;
   }
 }
